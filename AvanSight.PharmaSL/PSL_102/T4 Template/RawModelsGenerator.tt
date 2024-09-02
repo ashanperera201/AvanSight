@@ -1,0 +1,91 @@
+<#@ template debug="true" hostSpecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+
+<#
+    // Path where the generated classes will be saved
+    string classPath = Host.ResolvePath(@"../RAW_Models");
+
+    // Dictionary containing class names and their corresponding headers
+    var csvFiles = new Dictionary<string, string[]>
+    {
+        {
+            "PSL_102_DM_RAW", 
+            new[] { "ProjectID", "Subject", "DataPageName", "YOB", "Age", "Sex", "Race" }
+        },
+        {
+            "PSL_102_IC_RAW", 
+            new[] { "ProjectID", "Subject ID", "DataPageName", "Consent Date"} 
+        },
+        {
+            "PSL_102_IE_RAW", 
+            new[] { "Project", "Subject name or identifier", "DataPageName", "RecordDate", "SreenFail", "ScreenFailDat", "ScreenFailReason" } 
+        }
+    };
+
+    // Loop through each entry in the dictionary
+    foreach (var file in csvFiles)
+    {
+        string className = file.Key;
+        string mapperClassName = className + "CsvMapper";
+        string outputPath = Path.Combine(classPath, className + ".cs");
+        var headers = file.Value;
+
+        // Generate the class code
+        var classCode = new StringBuilder();
+        classCode.AppendLine("using CsvHelper.Configuration;");
+        classCode.AppendLine();
+        classCode.AppendLine($"namespace AvanSight.PharmaSL.PSL_102.RAW_Models");
+        classCode.AppendLine("{");
+        classCode.AppendLine("    /// <summary>");
+        classCode.AppendLine($"    /// Auto-generated class for {className}");
+        classCode.AppendLine($"    /// Date created: {DateTime.Now}");
+        classCode.AppendLine("    /// DO NOT modify this class manually.");
+        classCode.AppendLine("    /// </summary>");
+        classCode.AppendLine($"    public partial class {className}");
+        classCode.AppendLine("    {");
+
+        foreach (var header in headers)
+        {
+            string propertyName = header.Replace(" ", "_").Replace("-", "_");
+            classCode.AppendLine($"        public string {propertyName} {{ get; set; }}");
+        }
+
+        classCode.AppendLine("    }");
+        classCode.AppendLine();
+        classCode.AppendLine("    /// <summary>");
+        classCode.AppendLine($"    /// CsvHelper Mapper for {className}");
+        classCode.AppendLine("    /// </summary>");
+        classCode.AppendLine($"    public partial class {mapperClassName} : ClassMap<{className}>");
+        classCode.AppendLine("    {");
+        classCode.AppendLine("        public " + mapperClassName + "()");
+        classCode.AppendLine("        {");
+
+        foreach (var header in headers)
+        {
+            string propertyName = header.Replace(" ", "_").Replace("-", "_");
+            classCode.AppendLine($"            Map(m => m.{propertyName}).Name(\"{header}\");");
+        }
+
+        classCode.AppendLine("        }");
+        classCode.AppendLine("    }");
+        classCode.AppendLine("}");
+
+        // Ensure directory exists
+        Directory.CreateDirectory(classPath);
+
+        // Write the generated class to the specified file
+        try
+        {
+            File.WriteAllText(outputPath, classCode.ToString());
+        }
+        catch (Exception ex)
+        {
+            // Handle any exceptions that might occur during file writing
+            Console.WriteLine($"Error writing to file {outputPath}: {ex.Message}");
+        }
+    }
+#>
