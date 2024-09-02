@@ -30,6 +30,8 @@ namespace AvanSight.PharmaSL.PSL_101
             return new Study
             {
                 Id = currentStudyId,
+                ProjectNumber = StudyIdentifier,
+                StudyName = "Heart",
                 StudyIdentifier = StudyIdentifier,
             };
         }

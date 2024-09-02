@@ -12,6 +12,17 @@ namespace AvanSight.Server
             // Add services to the container.
             builder.Services.AddControllers();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+                    });
+            });
+
             // Register the PharmaDataService as a singleton
             builder.Services.AddServices();
 
@@ -31,6 +42,9 @@ namespace AvanSight.Server
             app.UseAuthorization();
 
             app.MapControllers();
+
+
+            app.UseCors("AllowAllOrigins");
 
             app.Run();
         }

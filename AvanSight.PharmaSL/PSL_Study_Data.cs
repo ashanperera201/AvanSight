@@ -14,7 +14,8 @@ namespace AvanSight.PharmaSL
 
             var pharma = new Pharma
             {
-                PharmaName = "PharmaSL",
+                PharmaName = "Hemas",
+                Country = "Sri Lanka",
                 Studies = new List<Study> { psl101DataCache.Study, psl102DataCache.Study }
             };
 

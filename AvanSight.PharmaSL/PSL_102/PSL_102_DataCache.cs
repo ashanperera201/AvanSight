@@ -28,6 +28,8 @@ namespace AvanSight.PharmaSL.PSL_102
             return new Study
             {
                 Id = currentStudyId,
+                ProjectNumber = StudyIdentifier,
+                StudyName = "Sugar",
                 StudyIdentifier = StudyIdentifier,
             };
         }
@@ -51,7 +53,7 @@ namespace AvanSight.PharmaSL.PSL_102
                         Gender = Enum.TryParse<Gender>(dmRecord.Sex, true, out var gender) ? gender : Gender.Unknown,
                         Race = Enum.TryParse<Race>(dmRecord.Race, true, out var race) ? race : Race.Unknown,
                         StudyIdentifier = StudyIdentifier,
-                        DateOfConcent = DateTime.Parse(ieRecord.RecordDate),
+                        DateOfConcent = string.IsNullOrEmpty(ieRecord.ScreenFailReason) ? DateTime.MinValue :  DateTime.Parse(ieRecord.RecordDate),
                         ScreenFailiureReason = ieRecord.ScreenFailReason
                     };
 

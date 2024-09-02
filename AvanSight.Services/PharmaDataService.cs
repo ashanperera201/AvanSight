@@ -41,6 +41,21 @@ namespace AvanSight.Services
         {
             return _pharmaList;
         }
+
+        public List<Study>? GetStudies(string pharma)
+        {
+            return _pharmaList.FirstOrDefault(x => x.PharmaName == pharma)?.Studies.ToList();
+        }
+
+        public List<Patient>? GetPatients(string pharma, string study)
+        {
+            var results = _pharmaList.FirstOrDefault(x => x.PharmaName == pharma);
+            if(results != null)
+            {
+                return results.Studies.FirstOrDefault(s => s.StudyName == study)?.Patients;
+            }
+            return null;
+        }
     }
 
 }
