@@ -2,16 +2,28 @@ import React, { useEffect, useRef } from "react";
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
+import { Patient } from "../Types";
 
-const PatientsBarChart = () => {
+interface IPatientsBarChartProps {
+  patients: Patient[];
+}
+
+const PatientsBarChart = (props: IPatientsBarChartProps) => {
+  const { patients } = props;
+
   const chartRef = useRef(null);
+
+  const raceMapping: any = {
+    1: "Asian",
+    2: "Black",
+    3: "White",
+  };
 
   useEffect(() => {
     let root = am5.Root.new(chartRef.current!);
 
     root.setThemes([am5themes_Animated.new(root)]);
 
-    // Create chart
     let chart = root.container.children.push(
       am5xy.XYChart.new(root, {
         panX: true,
@@ -24,11 +36,9 @@ const PatientsBarChart = () => {
       })
     );
 
-    // Add cursor
     let cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
     cursor.lineY.set("visible", false);
 
-    // Create axes
     let xRenderer = am5xy.AxisRendererX.new(root, {
       minGridDistance: 30,
       minorGridEnabled: true,
@@ -48,7 +58,7 @@ const PatientsBarChart = () => {
     let xAxis = chart.xAxes.push(
       am5xy.CategoryAxis.new(root, {
         maxDeviation: 0.3,
-        categoryField: "country",
+        categoryField: "race",
         renderer: xRenderer,
         tooltip: am5.Tooltip.new(root, {}),
       })
@@ -65,7 +75,6 @@ const PatientsBarChart = () => {
       })
     );
 
-    // Create series
     let series = chart.series.push(
       am5xy.ColumnSeries.new(root, {
         name: "Series 1",
@@ -73,7 +82,7 @@ const PatientsBarChart = () => {
         yAxis: yAxis,
         valueYField: "value",
         sequencedInterpolation: true,
-        categoryXField: "country",
+        categoryXField: "race",
         tooltip: am5.Tooltip.new(root, {
           labelText: "{valueY}",
         }),
@@ -94,19 +103,10 @@ const PatientsBarChart = () => {
       return chart.get("colors")!.getIndex(series.columns.indexOf(target));
     });
 
-    let data = [
-      { country: "USA", value: 2025 },
-      { country: "China", value: 1882 },
-      { country: "Japan", value: 1809 },
-      { country: "Germany", value: 1322 },
-      { country: "UK", value: 1122 },
-      { country: "France", value: 1114 },
-      { country: "India", value: 984 },
-      { country: "Spain", value: 711 },
-      { country: "Netherlands", value: 665 },
-      { country: "South Korea", value: 443 },
-      { country: "Canada", value: 441 },
-    ];
+    let data = Object.keys(raceCount).map((race) => ({
+      race: race,
+      value: raceCount[race],
+    }));
 
     xAxis.data.setAll(data);
     series.data.setAll(data);
@@ -117,6 +117,17 @@ const PatientsBarChart = () => {
       root.dispose();
     };
   }, []);
+
+  const raceCount = patients.reduce((acc, patient) => {
+    const raceLabel = raceMapping[patient.race] || "Not Specified";
+
+    if (!acc[raceLabel]) {
+      acc[raceLabel] = 0;
+    }
+
+    acc[raceLabel]++;
+    return acc;
+  }, {} as { [key: string]: number });
 
   return (
     <div

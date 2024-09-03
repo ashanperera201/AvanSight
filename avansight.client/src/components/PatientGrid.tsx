@@ -34,8 +34,12 @@ const columnDefs: ColDef[] = [
         : "Not Specified";
     },
   },
-  { headerName: "Enrollment Date", field: "enrollmentDate" },
-  { headerName: "Reason", field: "reason" },
+  { headerName: "Concent Date", field: "dateOfConcent" },
+  { headerName: "Screen Failed Date", field: "screenFailedDate" },
+  {
+    headerName: "Reason",
+    field: "screenFailiureReason",
+  },
 ];
 
 const PatientGrid = (props: IPatientGridProps): JSX.Element => {
