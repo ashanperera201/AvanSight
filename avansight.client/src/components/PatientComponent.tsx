@@ -4,10 +4,10 @@ import { Patient } from "../Types";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import Breadcrumb from "./Breadcrumb";
-import PatientsBarChart from "./PatientsBarChart";
 import { fetchPatients } from "../services/pharma.service";
 import PatientGrid from "./PatientGrid";
 import PieChartComponent from "./PatientPieChart";
+import PatientsBarChart from "./PatientsBarChart";
 
 const PatientComponent: React.FC = () => {
   const { pharmaName, studyName } = useParams();
@@ -33,7 +33,7 @@ const PatientComponent: React.FC = () => {
             style={{
               width: "100%",
               display: "flex",
-              justifyContent: 'center'
+              justifyContent: "center",
             }}
           >
             <div
