@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { Patient } from "../Types";
+import { useRef } from "react";
+import { Gender, Patient } from "../Types";
 import { ColDef } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 
@@ -10,8 +10,30 @@ interface IPatientGridProps {
 const columnDefs: ColDef[] = [
   { headerName: "Patient ID", field: "patientIdentifier" },
   { headerName: "Age", field: "age" },
-  { headerName: "Gender", field: "gender" },
-  { headerName: "Race", field: "race" },
+  {
+    headerName: "Gender",
+    field: "gender",
+    valueGetter: (params) => {
+      return params.data.gender === 1
+        ? 'Male'
+        : params.data.gender === 2
+        ? 'Female'
+        : 'Unknown';
+    },
+  },
+  {
+    headerName: "Race",
+    field: "race",
+    valueGetter: (params) => {
+      return params.data.race === 1
+        ? "Asian"
+        : params.data.race === 2
+        ? "Black"
+        : params.data.race === 3
+        ? "White"
+        : "Not Specified";
+    },
+  },
   { headerName: "Enrollment Date", field: "enrollmentDate" },
   { headerName: "Reason", field: "reason" },
 ];
